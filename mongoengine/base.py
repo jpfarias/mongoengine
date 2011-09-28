@@ -727,7 +727,7 @@ class BaseDocument(object):
     def _get_changed_fields(self, key=''):
         """Returns a list of all fields that have explicitly been changed.
         """
-        from mongoengine import EmbeddedDocument
+        from mongoengine import EmbeddedDocument, Document
         _changed_fields = []
         _changed_fields += getattr(self, '_changed_fields', [])
         for field_name in self._fields:
@@ -743,7 +743,7 @@ class BaseDocument(object):
                 else:
                     iterator = field.iteritems()
                 for index, value in iterator:
-                    if not hasattr(value, '_get_changed_fields'):
+                    if not hasattr(value, '_get_changed_fields') or isinstance(value, Document): # avoid infinite loop on recursive references
                         continue
                     list_key = "%s%s." % (key, index)
                     _changed_fields += ["%s%s" % (list_key, k) for k in value._get_changed_fields(list_key) if k]
