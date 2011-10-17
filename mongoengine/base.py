@@ -714,7 +714,7 @@ class BaseDocument(object):
         obj = cls(**data)
         obj._changed_fields = []
         return obj
-
+    
     def _mark_as_changed(self, key):
         """Marks a key as explicitly changed by the user
         """
@@ -730,7 +730,8 @@ class BaseDocument(object):
         from mongoengine import EmbeddedDocument
         _changed_fields = []
         _changed_fields += getattr(self, '_changed_fields', [])
-
+        _changed_fields += getattr(self, '_initialized_fields', [])
+        
         inspected = inspected or set()
         if hasattr(self, 'id'):
             if self.id in inspected:
@@ -790,45 +791,8 @@ class BaseDocument(object):
             set_data = doc
             if '_id' in set_data:
                 del(set_data['_id'])
-
-        # Determine if any changed items were actually unset.
-        for path, value in set_data.items():
-            if value:
-                continue
-
-            # If we've set a value that ain't the default value dont unset it.
-            default = None
-
-            if path in self._fields:
-                default = self._fields[path].default
-            else:  # Perform a full lookup for lists / embedded lookups
-                d = self
-                parts = path.split('.')
-                db_field_name = parts.pop()
-                for p in parts:
-                    if p.isdigit():
-                        d = d[int(p)]
-                    elif hasattr(d, '__getattribute__') and not isinstance(d, dict):
-                        real_path = d._reverse_db_field_map.get(p, p)
-                        d = getattr(d, real_path)
-                    else:
-                        d = d.get(p)
-
-                if hasattr(d, '_fields'):
-                    field_name = d._reverse_db_field_map.get(db_field_name,
-                                                             db_field_name)
-
-                    default = d._fields[field_name].default
-
-            if default is not None:
-                if callable(default):
-                    default = default()
-            if default != value:
-                continue
-
-            del(set_data[path])
-            unset_data[path] = 1
-        return set_data, unset_data
+        
+        return set_data, {}
 
     @classmethod
     def _geo_indices(cls, inspected_classes=None):
