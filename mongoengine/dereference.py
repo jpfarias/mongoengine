@@ -65,6 +65,7 @@ class DeReference(object):
             iterator = items.iteritems()
 
         # Recursively find dbreferences
+        depth += 1
         for k, item in iterator:
             if hasattr(item, '_fields'):
                 for field_name, field in item._fields.iteritems():
@@ -88,7 +89,6 @@ class DeReference(object):
                 references = self._find_references(item, depth)
                 for key, refs in references.iteritems():
                     reference_map.setdefault(key, []).extend(refs)
-        depth += 1
         return reference_map
 
     def _fetch_objects(self, doc_type=None):
@@ -152,6 +152,8 @@ class DeReference(object):
             iterator = items.iteritems()
             data = {}
 
+        depth += 1
+
         for k, v in iterator:
             if is_list:
                 data.append(v)
@@ -167,11 +169,11 @@ class DeReference(object):
                         data[k]._data[field_name] = self.object_map.get(v.id, v)
                     elif isinstance(v, (dict, pymongo.son.SON)) and '_ref' in v:
                         data[k]._data[field_name] = self.object_map.get(v['_ref'].id, v)
-                    elif isinstance(v, dict) and depth < self.max_depth:
+                    elif isinstance(v, dict) and depth <= self.max_depth:
                         data[k]._data[field_name] = self._attach_objects(v, depth, instance=instance, name=name, get=get)
-                    elif isinstance(v, (list, tuple)):
+                    elif isinstance(v, (list, tuple)) and depth <= self.max_depth:
                         data[k]._data[field_name] = self._attach_objects(v, depth, instance=instance, name=name, get=get)
-            elif isinstance(v, (dict, list, tuple)) and depth < self.max_depth:
+            elif isinstance(v, (dict, list, tuple)) and depth <= self.max_depth:
                 data[k] = self._attach_objects(v, depth, instance=instance, name=name, get=get)
             elif hasattr(v, 'id'):
                 data[k] = self.object_map.get(v.id, v)
@@ -180,7 +182,6 @@ class DeReference(object):
             if is_list:
                 return BaseList(data, instance=instance, name=name)
             return BaseDict(data, instance=instance, name=name)
-        depth += 1
         return data
 
 dereference = DeReference()

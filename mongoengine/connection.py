@@ -28,7 +28,10 @@ def _get_connection(reconnect=False):
     global _connection
     identity = get_identity()
     # Connect to the database if not already connected
-    if _connection.get(identity) is None or reconnect:
+    cur = _connection.get(identity)
+    if cur is None or reconnect:
+        if cur:
+            cur.disconnect()
         try:
             _connection[identity] = Connection(**_connection_settings)
         except Exception, e:

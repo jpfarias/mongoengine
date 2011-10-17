@@ -294,10 +294,10 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(q, 4)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 4)
+            self.assertEqual(q, 7)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 4)
+            self.assertEqual(q, 7)
 
             for m in group_obj.members:
                 self.assertTrue('User' in m.__class__.__name__)
@@ -309,12 +309,12 @@ class FieldTest(unittest.TestCase):
             group_objs = Group.objects.select_related()
             self.assertEqual(q, 4)
 
-            for group_obj in group_objs:
+            for k, group_obj in enumerate(group_objs):
                 [m for m in group_obj.members]
-                self.assertEqual(q, 4)
+                self.assertEqual(q, [7, 10][k])
 
                 [m for m in group_obj.members]
-                self.assertEqual(q, 4)
+                self.assertEqual(q, [7, 10][k])
 
                 for m in group_obj.members:
                     self.assertTrue('User' in m.__class__.__name__)
@@ -631,10 +631,10 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(q, 2)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 2)
+            self.assertEqual(q, 3)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 2)
+            self.assertEqual(q, 3)
 
             for k, m in group_obj.members.iteritems():
                 self.assertTrue(isinstance(m, UserA))
@@ -646,12 +646,12 @@ class FieldTest(unittest.TestCase):
             group_objs = Group.objects.select_related()
             self.assertEqual(q, 2)
 
-            for group_obj in group_objs:
+            for k, group_obj in enumerate(group_objs):
                 [m for m in group_obj.members]
-                self.assertEqual(q, 2)
+                self.assertEqual(q, [3, 4][k])
 
                 [m for m in group_obj.members]
-                self.assertEqual(q, 2)
+                self.assertEqual(q, [3, 4][k])
 
                 for k, m in group_obj.members.iteritems():
                     self.assertTrue(isinstance(m, UserA))
@@ -719,10 +719,10 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(q, 4)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 4)
+            self.assertEqual(q, 7)
 
             [m for m in group_obj.members]
-            self.assertEqual(q, 4)
+            self.assertEqual(q, 7)
 
             for k, m in group_obj.members.iteritems():
                 self.assertTrue('User' in m.__class__.__name__)
@@ -734,12 +734,12 @@ class FieldTest(unittest.TestCase):
             group_objs = Group.objects.select_related()
             self.assertEqual(q, 4)
 
-            for group_obj in group_objs:
+            for k, group_obj in enumerate(group_objs):
                 [m for m in group_obj.members]
-                self.assertEqual(q, 4)
+                self.assertEqual(q, [7, 10][k])
 
                 [m for m in group_obj.members]
-                self.assertEqual(q, 4)
+                self.assertEqual(q, [7, 10][k])
 
                 for k, m in group_obj.members.iteritems():
                     self.assertTrue('User' in m.__class__.__name__)
