@@ -730,7 +730,6 @@ class BaseDocument(object):
         from mongoengine import EmbeddedDocument
         _changed_fields = []
         _changed_fields += getattr(self, '_changed_fields', [])
-        _changed_fields += getattr(self, '_initialized_fields', [])
         
         inspected = inspected or set()
         if hasattr(self, 'id'):
@@ -792,7 +791,7 @@ class BaseDocument(object):
             if '_id' in set_data:
                 del(set_data['_id'])
         
-        return set_data, {}
+        return set_data, unset_data
 
     @classmethod
     def _geo_indices(cls, inspected_classes=None):
