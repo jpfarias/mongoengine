@@ -1440,12 +1440,12 @@ class DocumentTest(unittest.TestCase):
         doc._changed_fields = []
         doc.dict_field = {}
         self.assertEquals(doc._get_changed_fields(), ['dict_field'])
-        self.assertEquals(doc._delta(), ({}, {'dict_field': 1}))
+        self.assertEquals(doc._delta(), ({'dict_field': {}}, {}))
 
         doc._changed_fields = []
         doc.list_field = []
         self.assertEquals(doc._get_changed_fields(), ['list_field'])
-        self.assertEquals(doc._delta(), ({}, {'list_field': 1}))
+        self.assertEquals(doc._delta(), ({'list_field': []}, {}))
 
     def test_delta_recursive(self):
 
@@ -1495,16 +1495,16 @@ class DocumentTest(unittest.TestCase):
 
         doc.embedded_field.dict_field = {}
         self.assertEquals(doc._get_changed_fields(), ['embedded_field.dict_field'])
-        self.assertEquals(doc.embedded_field._delta(), ({}, {'dict_field': 1}))
-        self.assertEquals(doc._delta(), ({}, {'embedded_field.dict_field': 1}))
+        self.assertEquals(doc.embedded_field._delta(), ({'dict_field': {}}, {}))
+        self.assertEquals(doc._delta(), ({'embedded_field.dict_field': {}}, {}))
         doc.save()
         doc.reload()
         self.assertEquals(doc.embedded_field.dict_field, {})
 
         doc.embedded_field.list_field = []
         self.assertEquals(doc._get_changed_fields(), ['embedded_field.list_field'])
-        self.assertEquals(doc.embedded_field._delta(), ({}, {'list_field': 1}))
-        self.assertEquals(doc._delta(), ({}, {'embedded_field.list_field': 1}))
+        self.assertEquals(doc.embedded_field._delta(), ({'list_field': []}, {}))
+        self.assertEquals(doc._delta(), ({'embedded_field.list_field': []}, {}))
         doc.save()
         doc.reload()
         self.assertEquals(doc.embedded_field.list_field, [])
@@ -1602,7 +1602,7 @@ class DocumentTest(unittest.TestCase):
         doc.reload()
 
         del(doc.embedded_field.list_field[2].list_field)
-        self.assertEquals(doc._delta(), ({}, {'embedded_field.list_field.2.list_field': 1}))
+        self.assertEquals(doc._delta(), ({'embedded_field.list_field.2.list_field': []}, {}))
 
         doc.save()
         doc.reload()
@@ -1657,12 +1657,12 @@ class DocumentTest(unittest.TestCase):
         doc._changed_fields = []
         doc.dict_field = {}
         self.assertEquals(doc._get_changed_fields(), ['db_dict_field'])
-        self.assertEquals(doc._delta(), ({}, {'db_dict_field': 1}))
+        self.assertEquals(doc._delta(), ({'db_dict_field': {}}, {}))
 
         doc._changed_fields = []
         doc.list_field = []
         self.assertEquals(doc._get_changed_fields(), ['db_list_field'])
-        self.assertEquals(doc._delta(), ({}, {'db_list_field': 1}))
+        self.assertEquals(doc._delta(), ({'db_list_field': []}, {}))
 
         # Test it saves that data
         doc = Doc()
@@ -1728,16 +1728,16 @@ class DocumentTest(unittest.TestCase):
 
         doc.embedded_field.dict_field = {}
         self.assertEquals(doc._get_changed_fields(), ['db_embedded_field.db_dict_field'])
-        self.assertEquals(doc.embedded_field._delta(), ({}, {'db_dict_field': 1}))
-        self.assertEquals(doc._delta(), ({}, {'db_embedded_field.db_dict_field': 1}))
+        self.assertEquals(doc.embedded_field._delta(), ({'db_dict_field': {}}, {}))
+        self.assertEquals(doc._delta(), ({'db_embedded_field.db_dict_field': {}}, {}))
         doc.save()
         doc.reload()
         self.assertEquals(doc.embedded_field.dict_field, {})
 
         doc.embedded_field.list_field = []
         self.assertEquals(doc._get_changed_fields(), ['db_embedded_field.db_list_field'])
-        self.assertEquals(doc.embedded_field._delta(), ({}, {'db_list_field': 1}))
-        self.assertEquals(doc._delta(), ({}, {'db_embedded_field.db_list_field': 1}))
+        self.assertEquals(doc.embedded_field._delta(), ({'db_list_field': []}, {}))
+        self.assertEquals(doc._delta(), ({'db_embedded_field.db_list_field': []}, {}))
         doc.save()
         doc.reload()
         self.assertEquals(doc.embedded_field.list_field, [])
@@ -1835,7 +1835,7 @@ class DocumentTest(unittest.TestCase):
         doc.reload()
 
         del(doc.embedded_field.list_field[2].list_field)
-        self.assertEquals(doc._delta(), ({}, {'db_embedded_field.db_list_field.2.db_list_field': 1}))
+        self.assertEquals(doc._delta(), ({'db_embedded_field.db_list_field.2.db_list_field': []}, {}))
 
     def test_save_only_changed_fields(self):
         """Ensure save only sets / unsets changed fields
