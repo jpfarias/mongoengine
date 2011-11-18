@@ -1867,6 +1867,38 @@ class DocumentTest(unittest.TestCase):
         self.assertEquals(person.age, 21)
         self.assertEquals(person.active, False)
 
+    def test_new_embedded_documents(self):
+        """Ensure saving of new embedded document fields if model class changes
+        """
+        class B(EmbeddedDocument):
+            field1 = StringField(default='field1')
+        
+        class A(Document):
+            b = EmbeddedDocumentField(B, default=lambda: B())
+        
+        A.drop_collection()
+        a = A()
+        a.save()
+        a.reload()
+        self.assertEquals(a.b.field1, 'field1')
+        
+        class C(EmbeddedDocument):
+            c_field = StringField(default='cfield')
+        
+        class B(EmbeddedDocument):
+            field1 = StringField(default='field1')
+            field2 = EmbeddedDocumentField(C, default=lambda: C())
+        
+        class A(Document):
+            b = EmbeddedDocumentField(B, default=lambda: B())
+        
+        a = A.objects()[0]
+        a.b.field2.c_field = 'new value'
+        a.save()
+        
+        a.reload()
+        self.assertEquals(a.b.field2.c_field, 'new value')
+
     def test_save_only_changed_fields_recursive(self):
         """Ensure save only sets / unsets changed fields
         """

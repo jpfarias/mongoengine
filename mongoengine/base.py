@@ -705,14 +705,17 @@ class BaseDocument(object):
             cls = subclasses[class_name]
 
         present_fields = data.keys()
+        changed_fields = []
         for field_name, field in cls._fields.items():
             if field.db_field in data:
                 value = data[field.db_field]
                 data[field_name] = (value if value is None
                                     else field.to_python(value))
+            else:
+                changed_fields.append(field_name)
 
         obj = cls(**data)
-        obj._changed_fields = []
+        obj._changed_fields = changed_fields
         return obj
     
     def _mark_as_changed(self, key):
@@ -790,7 +793,6 @@ class BaseDocument(object):
             set_data = doc
             if '_id' in set_data:
                 del(set_data['_id'])
-        
         return set_data, unset_data
 
     @classmethod
