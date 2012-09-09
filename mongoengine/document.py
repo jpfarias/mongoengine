@@ -124,7 +124,7 @@ class MapReduceDocument(object):
 
     :param collection: An instance of :class:`~pymongo.Collection`
     :param key: Document/result key, often an instance of 
-                :class:`~pymongo.objectid.ObjectId`. If supplied as 
+                :class:`~bson.objectid.ObjectId`. If supplied as 
                 an ``ObjectId`` found in the given ``collection``, 
                 the object can be accessed via the ``object`` property.
     :param value: The result(s) for this key.

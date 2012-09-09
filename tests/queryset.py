@@ -58,7 +58,7 @@ class QuerySetTest(unittest.TestCase):
         self.assertEqual(len(people), 2)
         results = list(people)
         self.assertTrue(isinstance(results[0], self.Person))
-        self.assertTrue(isinstance(results[0].id, (pymongo.objectid.ObjectId,
+        self.assertTrue(isinstance(results[0].id, (bson.objectid.ObjectId,
                                                    str, unicode)))
         self.assertEqual(results[0].name, "User A")
         self.assertEqual(results[0].age, 20)

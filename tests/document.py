@@ -611,7 +611,7 @@ class DocumentTest(unittest.TestCase):
 
         # Test laziness
         self.assertTrue(isinstance(post_obj._data['author'], 
-                                   pymongo.dbref.DBRef))
+                                   bson.dbref.DBRef))
         self.assertTrue(isinstance(post_obj.author, self.Person))
         self.assertEqual(post_obj.author.name, 'Test User')
 
